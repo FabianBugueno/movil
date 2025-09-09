@@ -1,4 +1,20 @@
 .home-titulo {
   padding-left: 3%;
   padding-top:  3%;
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.home-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+ion-card {
+  flex: 1 1 calc(30% - 1rem); /* Cards responsivas */
+  max-width: 150px;
+  text-align: center;
 }

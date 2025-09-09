@@ -7,35 +7,61 @@
         </ion-card-header>
         <ion-card-content>
           <ion-item>
-            <ion-input label="Usuario" labelPlacement="floating" placeholder="Ingresa tu usuario"></ion-input>
+            <ion-input
+              [(ngModel)]="usuario"
+              label="Usuario"
+              labelPlacement="floating"
+              placeholder="Ingresa tu usuario"
+            ></ion-input>
           </ion-item>
-          <hr>
+          <hr />
           <ion-item>
-            <ion-input label="Nombre" labelPlacement="floating" placeholder="Ingresa tu nombre"></ion-input>
+            <ion-input
+              [(ngModel)]="nombre"
+              label="Nombre"
+              labelPlacement="floating"
+              placeholder="Ingresa tu nombre"
+            ></ion-input>
           </ion-item>
-          <hr>
+          <hr />
           <ion-item>
-            <ion-input label="Apellidos" labelPlacement="floating" placeholder="Ingresa tus apellidos"></ion-input>
+            <ion-input
+              [(ngModel)]="apellidos"
+              label="Apellidos"
+              labelPlacement="floating"
+              placeholder="Ingresa tus apellidos"
+            ></ion-input>
           </ion-item>
-          <hr>
+          <hr />
           <ion-item>
-            <ion-input label="Correo" labelPlacement="floating" placeholder="Ingresa tu correo"></ion-input>
+            <ion-input
+              [(ngModel)]="correo"
+              label="Correo"
+              labelPlacement="floating"
+              placeholder="Ingresa tu correo"
+            ></ion-input>
           </ion-item>
-          <hr>
+          <hr />
           <ion-item>
-            <ion-input type="password" labelPlacement="floating" label="Contraseña" value="" placeholder="Ingresa tu contraseña">
+            <ion-input
+              [(ngModel)]="contrasena"
+              type="password"
+              labelPlacement="floating"
+              label="Contraseña"
+              placeholder="Ingresa tu contraseña"
+            >
               <ion-input-password-toggle slot="end"></ion-input-password-toggle>
             </ion-input>
           </ion-item>
-          <ion-button expand="block"  color="primary" class="ion-margin-top">Registrarse</ion-button>
+          <ion-button (click)="registrarse()" expand="block" color="primary" class="ion-margin-top">
+            Registrarse
+          </ion-button>
           <div class="registro-texto">
             <ion-text color="dark">
-            <h3>¿Ya tienes cuenta?</h3> <a href="">Iniciar sesión</a>
-          </ion-text>
+              <h3>¿Ya tienes cuenta?</h3>
+              <a (click)="irALogin()" class="enlace-login">Iniciar sesión</a>
+            </ion-text>
           </div>
-          
-
-
         </ion-card-content>
       </ion-card>
     </div>

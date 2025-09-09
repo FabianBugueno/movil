@@ -1,30 +1,41 @@
 .login-bg {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--ion-background-color, #f6f6f6);
-  }
-  
-  .login-container {
-    width: 100%;
-    max-width: 350px;
-    margin: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; // Centrado vertical
-  }
-  
-  .login-card {
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    background: var(--ion-card-background, #fff);
-    padding: 1.5rem 1rem;
-  }
-  .registro-texto {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ion-background-color, #f6f6f6);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 350px;
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; // Centrado vertical
+}
+
+.login-card {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: var(--ion-card-background, #fff);
+  padding: 1.5rem 1rem;
+}
+
+.registro-texto {
+  display: flex;
+  flex-direction: column; /* Asegura que los elementos estén en columna */
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Centra el texto */
+  margin-top: 1rem; /* Espaciado superior */
+}
+
+.enlace-login {
+  color: var(--ion-color-primary); /* Color del enlace */
+  text-decoration: underline; /* Subrayado para que parezca un enlace */
+  cursor: pointer; /* Cambiar el cursor a pointer */
+  margin-top: 0.5rem; /* Espaciado entre el texto y el enlace */
+}

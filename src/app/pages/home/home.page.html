@@ -1,5 +1,83 @@
-<div class="home-titulo">
-  <ion-text color="dark">
-    <h1>Bienvenido {{usuario}} </h1>
-  </ion-text>
-</div>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Inicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="pageContent">
+  <div class="home-titulo">
+    <ion-text color="dark">
+      <h1>Bienvenido, {{usuario}}</h1>
+    </ion-text>
+  </div>
+
+  <ion-list>
+    <ion-item>
+      <ion-icon name="barbell-outline" slot="start"></ion-icon>
+      <ion-label>Rutina 1: Fuerza</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="fitness-outline" slot="start"></ion-icon>
+      <ion-label>Rutina 2: Cardio</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="nutrition-outline" slot="start"></ion-icon>
+      <ion-label>Rutina 3: Nutrición</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-icon name="walk-outline" slot="start"></ion-icon>
+      <ion-label>Rutina 4: Caminata</ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div class="home-cards">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Pesas</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-icon name="barbell-outline" size="large"></ion-icon>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Cardio</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-icon name="heart-outline" size="large"></ion-icon>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Nutrición</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-icon name="nutrition-outline" size="large"></ion-icon>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+
+
+<script>
+function cerrarSesion() {
+  const pageContent = document.getElementById('pageContent');
+  if (pageContent) {
+    // Agregar clase para animación de deslizamiento hacia la izquierda
+    pageContent.classList.add('slide-out-left');
+
+    // Esperar a que termine la animación antes de navegar
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 500); // Duración de la animación (0.5s)
+  }
+}
+</script>
