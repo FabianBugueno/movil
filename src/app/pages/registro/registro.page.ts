@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule]
+  imports: [IonicModule, FormsModule, NgIf]
 })
 export class RegistroPage {
   usuario: string = '';
@@ -16,6 +17,7 @@ export class RegistroPage {
   apellidos: string = '';
   correo: string = '';
   contrasena: string = '';
+  mensajeError: string = ''; // <-- Agrega esta línea
 
   constructor(private router: Router, private navCtrl: NavController) {}
 
@@ -32,23 +34,23 @@ export class RegistroPage {
   }
 
   registrarse() {
+    this.mensajeError = ''; // Limpiar mensaje
+
     // Validar que todos los campos estén llenos
     if (!this.usuario || !this.nombre || !this.apellidos || !this.correo || !this.contrasena) {
-      alert('Por favor, completa todos los campos.');
+      this.mensajeError = 'Por favor, completa todos los campos.';
       return;
     }
 
     // Validar el formato del correo
     if (!this.esCorreoValido(this.correo)) {
-      alert('El correo electrónico no tiene un formato válido.');
+      this.mensajeError = 'El correo electrónico no tiene un formato válido.';
       return;
     }
 
     // Validar la seguridad de la contraseña
     if (!this.esContrasenaSegura(this.contrasena)) {
-      alert(
-        'La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula, una letra minúscula, un número y un carácter especial.'
-      );
+      this.mensajeError = 'La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.';
       return;
     }
 

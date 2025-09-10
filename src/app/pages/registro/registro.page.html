@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" id="pageContent">
   <div class="login-bg">
     <div class="login-container">
       <ion-card class="login-card">
@@ -53,14 +53,17 @@
               <ion-input-password-toggle slot="end"></ion-input-password-toggle>
             </ion-input>
           </ion-item>
+          <div *ngIf="mensajeError" class="mensaje-error">
+            {{ mensajeError }}
+          </div>
           <ion-button (click)="registrarse()" expand="block" color="primary" class="ion-margin-top">
             Registrarse
           </ion-button>
           <div class="registro-texto">
             <ion-text color="dark">
               <h3>¿Ya tienes cuenta?</h3>
-              <a (click)="irALogin()" class="enlace-login">Iniciar sesión</a>
             </ion-text>
+            <a (click)="irALogin()" class="enlace-login">Iniciar sesión</a>
           </div>
         </ion-card-content>
       </ion-card>

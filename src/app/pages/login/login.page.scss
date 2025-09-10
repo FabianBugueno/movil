@@ -32,3 +32,33 @@
   margin-bottom: 1rem;
   letter-spacing: 0.5px;
 }
+
+@keyframes scale-btn {
+  0% { transform: scale(1);}
+  50% { transform: scale(1.08);}
+  100% { transform: scale(1);}
+}
+
+@keyframes shake-btn {
+  0% { transform: translateX(0);}
+  20% { transform: translateX(-8px);}
+  40% { transform: translateX(8px);}
+  60% { transform: translateX(-8px);}
+  80% { transform: translateX(8px);}
+  100% { transform: translateX(0);}
+}
+
+.scale-anim {
+  animation: scale-btn 0.6s; // Más lento
+}
+
+.shake-anim {
+  animation: shake-btn 0.7s; // Más lento
+}
+
+.mensaje-error {
+  color: #e74c3c;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1rem;
+}

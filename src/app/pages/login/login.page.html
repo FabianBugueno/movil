@@ -1,9 +1,10 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" id="pageContent">
   <div class="login-bg">
     <div class="login-container">
       <ion-card class="login-card">
-        <ion-card-header>
-          <ion-card-title class="login-title">Iniciar Sesión</ion-card-title>
+        <ion-card-header style="display: flex; flex-direction: column; align-items: center;">
+          <ion-icon name="flash-outline" style="font-size: 2.5rem; margin-bottom: 8px; color: var(--ion-color-primary);"></ion-icon>
+          <ion-card-title class="login-title">FitPlan</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-item>
@@ -26,7 +27,10 @@
               <ion-input-password-toggle slot="end"></ion-input-password-toggle>
             </ion-input>
           </ion-item>
-          <ion-button (click)="iniciarSesion()" expand="block" color="primary" class="ion-margin-top">
+          <div *ngIf="mensajeError" class="mensaje-error">
+            {{ mensajeError }}
+          </div>
+          <ion-button id="btn-iniciar" (click)="iniciarSesion()" expand="block" color="primary" class="ion-margin-top">
             Iniciar Sesión
           </ion-button>
           <ion-button (click)="registro()" expand="block" fill="outline" color="secondary" class="ion-margin-top">

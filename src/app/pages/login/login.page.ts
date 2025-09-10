@@ -2,17 +2,19 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule]
+  imports: [IonicModule, FormsModule, NgIf]
 })
 export class LoginPage {
   usuario: string = '';
   contrasena: string = '';
+  mensajeError: string = ''; // NUEVO
 
   constructor(private router: Router, private navCtrl: NavController) {}
 
@@ -28,30 +30,49 @@ export class LoginPage {
   }
 
   iniciarSesion() {
+    const btn = document.getElementById('btn-iniciar');
+    this.mensajeError = '';
+
     // Validar que ambos campos estén llenos
     if (!this.usuario || !this.contrasena) {
-      alert('Por favor, completa todos los campos.');
+      if (btn) {
+        btn.classList.remove('scale-anim');
+        btn.classList.add('shake-anim');
+        setTimeout(() => btn.classList.remove('shake-anim'), 700);
+      }
+      this.mensajeError = 'Por favor, completa todos los campos.';
       return;
     }
 
     // Validar que el usuario tenga al menos 5 caracteres
     if (!this.esUsuarioValido(this.usuario)) {
-      alert('El usuario debe tener al menos 5 caracteres.');
+      if (btn) {
+        btn.classList.remove('scale-anim');
+        btn.classList.add('shake-anim');
+        setTimeout(() => btn.classList.remove('shake-anim'), 700);
+      }
+      this.mensajeError = 'El usuario debe tener al menos 5 caracteres.';
       return;
     }
 
     // Validar la seguridad de la contraseña
     if (!this.esContrasenaValida(this.contrasena)) {
-      alert(
-        'La contraseña debe tener al menos 8 caracteres, incluyendo una letra mayúscula, una letra minúscula, un número y un carácter especial.'
-      );
+      if (btn) {
+        btn.classList.remove('scale-anim');
+        btn.classList.add('shake-anim');
+        setTimeout(() => btn.classList.remove('shake-anim'), 700);
+      }
+      this.mensajeError = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.';
       return;
     }
 
     // Simular autenticación exitosa
-    console.log('Inicio de sesión exitoso:', this.usuario);
-
-    // Establecer animación de slide hacia la derecha
+    if (btn) {
+      btn.classList.remove('shake-anim');
+      btn.classList.add('scale-anim');
+      setTimeout(() => btn.classList.remove('scale-anim'), 600);
+    }
+    this.mensajeError = '';
     this.navCtrl.setDirection('forward');
     this.router.navigate(['/home'], { state: { user: this.usuario } });
   }

@@ -39,3 +39,10 @@
   cursor: pointer; /* Cambiar el cursor a pointer */
   margin-top: 0.5rem; /* Espaciado entre el texto y el enlace */
 }
+
+.mensaje-error {
+  color: #e74c3c;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1rem;
+}

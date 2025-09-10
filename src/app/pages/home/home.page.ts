@@ -25,13 +25,10 @@ export class HomePage {
   cerrarSesion() {
     const pageContent = document.getElementById('pageContent');
     if (pageContent) {
-      // Agregar clase para animación de deslizamiento hacia la izquierda
       pageContent.classList.add('slide-out-left');
-
-      // Esperar a que termine la animación antes de navegar
       setTimeout(() => {
         this.router.navigate(['/login']);
-      }, 500); // Duración de la animación (0.5s)
+      }, 500);
     }
   }
 }

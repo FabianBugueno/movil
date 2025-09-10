@@ -1,19 +1,33 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Inicio</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrarSesion()">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content id="pageContent">
   <div class="home-titulo">
     <ion-text color="dark">
-      <h1>Bienvenido, {{usuario}}</h1>
+      <h1 style="margin: 0;">Bienvenido/a, {{usuario}}</h1>
     </ion-text>
+    <ion-button fill="clear" (click)="cerrarSesion()" class="cerrar-sesion-btn">
+      <ion-icon name="log-out-outline"></ion-icon>
+    </ion-button>
+  </div>
+  <div class="home-cards">
+    <ion-card>
+      <div class="card-content-flex">
+        <ion-icon name="list-outline" ></ion-icon>
+        <span class="card-title">Mis Rutinas</span>
+      </div>
+    </ion-card>
+
+    <ion-card>
+      <div class="card-content-flex">
+        <ion-icon name="calendar-outline" ></ion-icon>
+        <span class="card-title">Calendario</span>
+      </div>
+    </ion-card>
+
+    <ion-card>
+      <div class="card-content-flex">
+        <ion-icon name="person-circle-outline" ></ion-icon>
+        <span class="card-title">Perfil</span>
+      </div>
+    </ion-card>
   </div>
 
   <ion-list>
@@ -34,50 +48,5 @@
       <ion-label>Rutina 4: Caminata</ion-label>
     </ion-item>
   </ion-list>
-
-  <div class="home-cards">
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Pesas</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-icon name="barbell-outline" size="large"></ion-icon>
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Cardio</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-icon name="heart-outline" size="large"></ion-icon>
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Nutrición</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ion-icon name="nutrition-outline" size="large"></ion-icon>
-      </ion-card-content>
-    </ion-card>
-  </div>
 </ion-content>
 
-
-
-<script>
-function cerrarSesion() {
-  const pageContent = document.getElementById('pageContent');
-  if (pageContent) {
-    // Agregar clase para animación de deslizamiento hacia la izquierda
-    pageContent.classList.add('slide-out-left');
-
-    // Esperar a que termine la animación antes de navegar
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 500); // Duración de la animación (0.5s)
-  }
-}
-</script>
