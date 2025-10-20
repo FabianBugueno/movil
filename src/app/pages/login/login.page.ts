@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
 import { NgIf } from '@angular/common';
+import { Db } from 'src/app/services/db';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginPage {
   contrasena: string = '';
   mensajeError: string = ''; // NUEVO
 
-  constructor(private router: Router, private navCtrl: NavController) {}
+  constructor(private router: Router, private navCtrl: NavController, db: Db) {}
 
   // Método para validar el usuario
   private esUsuarioValido(usuario: string): boolean {
