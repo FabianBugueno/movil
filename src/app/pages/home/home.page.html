@@ -1,8 +1,9 @@
-<ion-content id="pageContent">
+<ion-content [fullscreen]="true" id="pageContent">
   <div class="home-titulo">
     <ion-text color="dark">
       <h1 style="margin: 0;">Bienvenido/a, {{usuario}}</h1>
     </ion-text>
+    <ion-icon name="create-outline" slot ="icon-only" (click)="navegarCambiarContrasena()"></ion-icon>
     <ion-button fill="clear" (click)="cerrarSesion()" class="cerrar-sesion-btn">
       <ion-icon name="log-out-outline"></ion-icon>
     </ion-button>
@@ -49,4 +50,3 @@
     </ion-item>
   </ion-list>
 </ion-content>
-

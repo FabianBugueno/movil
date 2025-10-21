@@ -17,76 +17,53 @@ export class LoginPage {
   contrasena: string = '';
   mensajeError: string = ''; // NUEVO
 
-  constructor(private router: Router, private navCtrl: NavController, db: Db) {}
+  constructor(private router: Router, private navCtrl: NavController, private db: Db) {}
 
-  // Método para validar el usuario
-  private esUsuarioValido(usuario: string): boolean {
-    return usuario.length >= 5; // El usuario debe tener al menos 5 caracteres
-  }
-
-  // Método para validar la seguridad de la contraseña
-  private esContrasenaValida(contrasena: string): boolean {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return regex.test(contrasena); // Validar que la contraseña cumpla con los requisitos
-  }
-
-  iniciarSesion() {
-    const btn = document.getElementById('btn-iniciar');
+  async iniciarSesion() {
     this.mensajeError = '';
 
-    // Validar que ambos campos estén llenos
     if (!this.usuario || !this.contrasena) {
-      if (btn) {
-        btn.classList.remove('scale-anim');
-        btn.classList.add('shake-anim');
-        setTimeout(() => btn.classList.remove('shake-anim'), 700);
-      }
-      this.mensajeError = 'Por favor, completa todos los campos.';
+      this.mensajeError = 'Completa usuario y contraseña.';
       return;
     }
 
-    // Validar que el usuario tenga al menos 5 caracteres
-    if (!this.esUsuarioValido(this.usuario)) {
-      if (btn) {
-        btn.classList.remove('scale-anim');
-        btn.classList.add('shake-anim');
-        setTimeout(() => btn.classList.remove('shake-anim'), 700);
-      }
-      this.mensajeError = 'El usuario debe tener al menos 5 caracteres.';
-      return;
-    }
+    try {
+      const usuarioData = await this.db.loginUsuario(this.usuario, this.contrasena);
 
-    // Validar la seguridad de la contraseña
-    if (!this.esContrasenaValida(this.contrasena)) {
-      if (btn) {
-        btn.classList.remove('scale-anim');
-        btn.classList.add('shake-anim');
-        setTimeout(() => btn.classList.remove('shake-anim'), 700);
-      }
-      this.mensajeError = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.';
-      return;
-    }
+      if (usuarioData) {
+        
+        localStorage.setItem('idUsuario', usuarioData.idusuario); 
 
-    // Simular autenticación exitosa
-    if (btn) {
-      btn.classList.remove('shake-anim');
-      btn.classList.add('scale-anim');
-      setTimeout(() => btn.classList.remove('scale-anim'), 600);
+        const navigationExtras = {
+          state: {
+            usuario: usuarioData.nombre,
+            contrasena: this.contrasena,
+            idusuario: usuarioData.idusuario  
+          } 
+        };
+
+        
+        localStorage.setItem('user', usuarioData.nombre);
+        
+        this.router.navigate(['/home'], navigationExtras);
+        console.log('Inicio de sesión exitoso:', usuarioData.nombre);
+      } else {
+        this.mensajeError = 'Usuario o contraseña incorrectos.';
+      }
+
+    } catch (e) {
+      console.error('FBP : Error al iniciar sesión', e);
+      this.mensajeError = 'Error al iniciar sesión.';
     }
-    this.mensajeError = '';
-    this.navCtrl.setDirection('forward');
-    this.router.navigate(['/home'], { state: { user: this.usuario } });
   }
+
   registro() {
     const pageContent = document.getElementById('pageContent');
     if (pageContent) {
-      // Agregar clase para animación de deslizamiento hacia la derecha
       pageContent.classList.add('slide-out-right');
-
-      // Esperar a que termine la animación antes de navegar
       setTimeout(() => {
         this.router.navigate(['/registro']);
-      }, 500); // Duración de la animación (0.5s)
+      }, 500); 
     }
   }
 }
