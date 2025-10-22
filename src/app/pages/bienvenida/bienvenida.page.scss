@@ -1,0 +1,28 @@
+.bienvenida-center {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+    background-color:green;
+}
+.bienvenida-bg{
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: radial-gradient(circle at top left, #7b00ff 0%, #000 80%);
+}
+.bienvenida-title{
+	color: #fff;
+	font-size: 1.8rem;
+	margin: 0 0 1rem 0;
+	text-shadow: 0 0 12px rgba(200,0,255,0.9);
+}
+
+#img_logo{
+	width: 180px;
+	height: 180px;
+	object-fit: contain;
+	margin-top: -8px; /* subir un poco la imagen */
+	filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
+}

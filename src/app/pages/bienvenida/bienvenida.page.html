@@ -1,0 +1,21 @@
+
+<ion-content [fullscreen]="true">
+	<ng-container *ngIf="!checking; else loading">
+		<div class="bienvenida-bg">
+			<div class="bienvenida-card">
+				<ion-img id="img_logo" src="assets/icon.png"></ion-img>
+				<br>
+				<h1 class="bienvenida-title">Bienvenido/a</h1>
+			</div>
+		</div>
+	</ng-container>
+
+	<ng-template #loading>
+		<div class="bienvenida-bg">
+			<div class="loading-wrap">
+				<ion-spinner name="crescent"></ion-spinner>
+			</div>
+		</div>
+	</ng-template>
+
+</ion-content>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { Db } from 'src/app/services/db';
 
 @Component({
@@ -25,15 +25,15 @@ export class CambiarContrasenaPage implements OnInit {
   ngOnInit() {
   let extras = this.router.getCurrentNavigation();
   if (extras?.extras.state) {
-    this.usuario = extras.extras.state['usuario'];           // nombre del usuario (para mostrar)
+    this.usuario = extras.extras.state['usuario'];           
     this.contrasena = extras.extras.state['contrasena'];
-    // 🔹 NUEVO: guardar el idusuario real
+    
     const idusuario = extras.extras.state['idusuario'] || localStorage.getItem('idUsuario');
-    if (idusuario) {
-      this.usuario = idusuario; // 👈 ahora this.usuario será el id real usado en BD
+    if (idusuario) {  
+      this.usuario = idusuario;
     }
   } else {
-    // Si no hay navegación, intento recuperar desde localStorage
+    
     const idusuario = localStorage.getItem('idUsuario');
     if (idusuario) this.usuario = idusuario;
   }
@@ -41,7 +41,13 @@ export class CambiarContrasenaPage implements OnInit {
   
   cambiarContrasena(){
     this.db.cambiarContrasena(this.usuario, this.contrasena, this.contrasenaNueva);
-    this.router.navigate(['/login']); 
+    
+    let extras: NavigationExtras = {
+      replaceUrl: true
+    }
+    
+    this.router.navigate(['/login', extras]); 
+
     
   }
 }

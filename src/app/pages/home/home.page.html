@@ -32,21 +32,13 @@
   </div>
 
   <ion-list>
-    <ion-item>
+    <ion-item *ngFor="let x of lista_ejercicios; let i = index" (click)="verDescripcion(x)">
       <ion-icon name="barbell-outline" slot="start"></ion-icon>
-      <ion-label>Rutina 1: Fuerza</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-icon name="fitness-outline" slot="start"></ion-icon>
-      <ion-label>Rutina 2: Cardio</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-icon name="nutrition-outline" slot="start"></ion-icon>
-      <ion-label>Rutina 3: Nutrición</ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-icon name="walk-outline" slot="start"></ion-icon>
-      <ion-label>Rutina 4: Caminata</ion-label>
+      <ion-label>
+        <div class="ej-id">Ejercicio N° {{i + 1}}</div>
+        <h2 class="ej-nombre">{{x.nombre}}</h2>
+        <p class="ej-descripcion" [innerHTML]="x.descripcion"></p>
+      </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>

@@ -41,10 +41,9 @@ export class LoginPage {
             idusuario: usuarioData.idusuario  
           } 
         };
-
         
         localStorage.setItem('user', usuarioData.nombre);
-        
+        this.db.almacenarSesion(usuarioData.idusuario, usuarioData.contrasena);
         this.router.navigate(['/home'], navigationExtras);
         console.log('Inicio de sesión exitoso:', usuarioData.nombre);
       } else {

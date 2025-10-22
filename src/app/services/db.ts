@@ -13,24 +13,72 @@ export class Db {
   }
 
   crearTablas(): Promise<any> {
+
     return this.sqlite.create({
       name: 'data.db',
       location: 'default'
     })
     .then((db: SQLiteObject) => {
-      // Sintaxis correcta de SQLite y uso de 'contrasena' sin 'ñ'
+      
       return db.executeSql(
         'CREATE TABLE IF NOT EXISTS usuario (idusuario VARCHAR(30), nombre VARCHAR(35), apellido VARCHAR(35), correo VARCHAR(75), contrasena VARCHAR(30))',
         []
-      );
+      )
+      
+      .then(() => db.executeSql(
+        'CREATE TABLE IF NOT EXISTS sesion (idusuario VARCHAR(30), contrasena VARCHAR(30))',
+        []
+      ));
     })
-    .then(() => console.log('FBP : Tabla usuario creada'))
+    .then(() => console.log('FBP : Tablas creadas/actualizadas correctamente'))
     .catch(e => {
-      console.error('FBP : Error al crear base de datos/tabla: ', e);
+      console.error('FBP : Error al crear/actualizar tablas: ', e);
       throw e;
     });
   }
-    
+
+  almacenarSesion(usuario: string, contrasena: string): Promise<any> {
+    return this.sqlite.create({
+      name: 'data.db',
+      location: 'default'
+    })
+    .then((db: SQLiteObject) => {
+      return db.executeSql(
+        'INSERT INTO sesion (idusuario, contrasena) VALUES (?, ?)',
+        [usuario, contrasena]
+      );
+    })
+    .then(() => {
+      console.log('FBP : Sesión almacenada con éxito.');
+      return true;
+    })
+    .catch(e => {
+      console.error('FBP : No se pudo almacenar la sesión', e);
+      throw e;
+    });
+  }
+  eliminarSesion(): Promise<any> {
+    return this.sqlite.create({
+      name: 'data.db',
+      location: 'default' 
+    })
+    .then((db: SQLiteObject) => {
+      return db.executeSql(
+        'DELETE FROM sesion',
+        []
+      );
+    })
+    .then(() => {
+      console.log('FBP : Sesión eliminada con éxito.');
+      return true;
+    }
+    )
+    .catch(e => {
+      console.error('FBP : No se pudo eliminar la sesión', e);
+      throw e;
+    }
+    );
+  }
   almacenarUsuario(usuario: string, nombre: string, apellidos: string, correo: string, contrasena: string): Promise<any> {
     return this.sqlite.create({
       name: 'data.db',
@@ -59,7 +107,7 @@ export class Db {
       throw e;
     });
   }
-
+  
   loginUsuario(usuario: string, contrasena: string): Promise<any> {
   return this.sqlite.create({
     name: 'data.db',
@@ -81,6 +129,30 @@ export class Db {
   })
   .catch(e => {
     console.error('FBP : Error en loginUsuario', e);
+    throw e;
+  });
+}
+validarSesion(): Promise<any> {
+  return this.sqlite.create({
+    name: 'data.db',
+    location: 'default'
+  })
+  .then((db: SQLiteObject) => {
+    return db.executeSql(
+      'SELECT * FROM sesion ',
+      []
+    );
+  })
+  .then((data) => {
+    if (data.rows.length > 0) {
+      const usuario = data.rows.item(0);
+      return usuario; 
+    } else {
+      return null; 
+    }
+  })
+  .catch(e => {
+    console.error('FBP : Error en validarSesion', e);
     throw e;
   });
 }

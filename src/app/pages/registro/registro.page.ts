@@ -58,10 +58,15 @@ export class RegistroPage {
 
       try {
         await this.db.almacenarUsuario(this.usuario, this.nombre, this.apellidos, this.correo, this.contrasena);
+        // Después de registrar también persistimos la sesión y guardamos el nombre en localStorage
+        await this.db.almacenarSesion(this.usuario, this.contrasena);
+        localStorage.setItem('user', this.nombre);
+        localStorage.setItem('idUsuario', this.usuario);
         setTimeout(() => {
-          const navigationExtras = { state: { user: this.nombre } };
+          // usamos la clave 'usuario' (la que espera Home) para mantener consistencia
+          const navigationExtras = { state: { usuario: this.nombre, contrasena: this.contrasena, idusuario: this.usuario } };
           this.router.navigate(['/home'], navigationExtras);
-          console.log('Usuario registrado:', this.nombre);
+          console.log('Usuario registrado y sesión iniciada:', this.nombre);
         }, 500);
       } catch (e: any) {
         console.error('Error al guardar usuario:', e);
