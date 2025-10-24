@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/rutinas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Formulario de Rutina</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="rutinaForm" (ngSubmit)="onSubmit()">
+    <div class="form-rutina-list">
+      <ion-item position="stacked">
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input formControlName="nombre" type="text" placeholder="Nombre de la rutina"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-textarea formControlName="descripcion" rows="3"></ion-textarea>
+      </ion-item>
+
+      <div class="seleccionados-list">
+        <div *ngFor="let sel of ejerciciosSeleccionados; let i = index">
+          <ion-item>
+            <ion-label>{{ sel.nombre }}</ion-label>
+            <ion-button fill="clear" color="danger" (click)="eliminarEjercicioSeleccionado(i)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </div>
+      </div>
+
+      <div class="ejercicios-wrapper">
+        <div *ngFor="let ejercicio of ejerciciosFiltrados">
+          <ion-item button (click)="agregarEjercicio($event, ejercicio)">
+            <ion-label>
+              <h2>{{ ejercicio.nombre }}</h2>
+              <p>{{ ejercicio.categoria }}</p>
+            </ion-label>
+            <ion-icon slot="end" name="add-circle-outline"></ion-icon>
+          </ion-item>
+        </div>
+      </div>
+
+      <ion-item class="paginacion-container">
+        <ion-button (click)="cambiarPagina(-1)" [disabled]="paginaActual === 1">Anterior</ion-button>
+        <ion-label class="ion-text-center">Página {{ paginaActual }} de {{ totalPaginas }}</ion-label>
+        <ion-button (click)="cambiarPagina(1)" [disabled]="paginaActual === totalPaginas">Siguiente</ion-button>
+      </ion-item>
+
+      <div class="boton-guardar">
+        <ion-button expand="block" type="submit" [disabled]="rutinaForm.invalid">Guardar Rutina</ion-button>
+      </div>
+    </div>
+  </form>
+</ion-content>

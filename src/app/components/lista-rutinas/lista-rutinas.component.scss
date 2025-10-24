@@ -1,0 +1,31 @@
+.crud-buttons {
+  gap: 8px;
+  display: flex;
+
+  ion-button {
+    height: 30px;
+    width: 30px;
+    --padding-start: 0;
+    --padding-end: 0;
+    --background: transparent;
+    --background-activated: transparent;
+    --background-hover: transparent;
+    --box-shadow: none;
+    --ripple-color: transparent;
+
+    &::part(native) {
+      background: transparent;
+    }
+
+    ion-icon {
+      color: white;
+      font-size: 16px;
+    }
+
+    &.button-solid {
+      --background: transparent;
+      --background-activated: transparent;
+      --background-hover: transparent;
+    }
+  }
+}

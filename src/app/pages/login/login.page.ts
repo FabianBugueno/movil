@@ -1,26 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
-import { NgIf } from '@angular/common';
+import { NgIf, CommonModule } from '@angular/common'; // Import CommonModule here
 import { Db } from 'src/app/services/db';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, NgIf]
+  imports: [IonicModule, FormsModule, NgIf, CommonModule]
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   usuario: string = '';
   contrasena: string = '';
-  mensajeError: string = ''; // NUEVO
+  mensajeError: string = '';
+  mensajeExito: string = ''; // Para el mensaje de éxito
+  showPassword = false;
 
-  constructor(private router: Router, private navCtrl: NavController, private db: Db) {}
+  constructor(private router: Router, private navCtrl: NavController, private db: Db, private auth: AuthService) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation?.extras.state && navigation.extras.state['mensajeExito']) {
+      this.mensajeExito = navigation.extras.state['mensajeExito'];
+    }
+  }
+
+  ngOnInit() {}
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 
   async iniciarSesion() {
     this.mensajeError = '';
+    this.mensajeExito = ''; // Limpiar mensajes al intentar iniciar sesión
 
     if (!this.usuario || !this.contrasena) {
       this.mensajeError = 'Completa usuario y contraseña.';
@@ -31,19 +46,16 @@ export class LoginPage {
       const usuarioData = await this.db.loginUsuario(this.usuario, this.contrasena);
 
       if (usuarioData) {
-        
-        localStorage.setItem('idUsuario', usuarioData.idusuario); 
+        await this.auth.guardarSesion(usuarioData.idusuario, usuarioData.contrasena, usuarioData.nombre);
 
         const navigationExtras = {
           state: {
             usuario: usuarioData.nombre,
             contrasena: this.contrasena,
-            idusuario: usuarioData.idusuario  
-          } 
+            idusuario: usuarioData.idusuario
+          }
         };
-        
-        localStorage.setItem('user', usuarioData.nombre);
-        this.db.almacenarSesion(usuarioData.idusuario, usuarioData.contrasena);
+
         this.router.navigate(['/home'], navigationExtras);
         console.log('Inicio de sesión exitoso:', usuarioData.nombre);
       } else {
@@ -62,7 +74,7 @@ export class LoginPage {
       pageContent.classList.add('slide-out-right');
       setTimeout(() => {
         this.router.navigate(['/registro']);
-      }, 500); 
+      }, 500);
     }
   }
 }

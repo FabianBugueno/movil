@@ -1,0 +1,57 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/rutinas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ rutina?.nombre }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="['/rutinas/editar', rutina?.id]">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="agregarAlCalendario()" title="Agregar al calendario">
+        <ion-icon slot="icon-only" name="calendar-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Descripción</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      {{ rutina?.descripcion }}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Ejercicios</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let ejercicio of rutina?.ejercicios">
+          <ion-label>
+            <h2>{{ ejercicio.nombre }}</h2>
+            <p>{{ ejercicio.categoria }}</p>
+          </ion-label>
+          <ion-button fill="clear" slot="end" (click)="verDescripcion(ejercicio)">
+            <ion-icon slot="icon-only" name="information-circle-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Botón de Eliminar Rutina -->
+  <div class="ion-padding">
+    <ion-button expand="block" color="danger" (click)="eliminarRutina()">
+      Eliminar Rutina
+    </ion-button>
+  </div>
+  <!-- Uso oculto del selector-fecha-hora para evitar la advertencia NG8113 (usado dinámicamente por ModalController) -->
+  <ng-container *ngIf="false">
+    <selector-fecha-hora></selector-fecha-hora>
+  </ng-container>
+</ion-content>

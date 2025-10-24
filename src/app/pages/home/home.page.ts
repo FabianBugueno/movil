@@ -1,25 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras, Router, RouterModule } from '@angular/router';
 import { IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, firstValueFrom } from 'rxjs';
 import { Api } from 'src/app/services/api';
+import { getCategoryNameEs } from 'src/app/data/exercise-categories';
 import { AlertController } from '@ionic/angular';
 import { Db } from 'src/app/services/db';
+import { AuthService } from 'src/app/services/auth.service';
+import { ListaRutinasComponent } from '../../components/lista-rutinas/lista-rutinas.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule, CommonModule, RouterModule, ListaRutinasComponent]
 })
 export class HomePage implements OnInit {
   usuario: string = '';
   contrasena: string = '';
   lista_ejercicios: any[] = [];
+  ejerciciosFiltrados: any[] = [];
+  paginaActual = 1;
+  elementosPorPagina = 10;
+  totalPaginas = 1;
 
-  constructor(private router: Router, private navCtrl: NavController, private db : Db, private api : Api, private alertCtrl: AlertController) {}
+  constructor(private router: Router, private navCtrl: NavController, private db : Db, private api : Api, private alertCtrl: AlertController, private auth: AuthService) {}
 
   ngOnInit() {
     
@@ -43,65 +50,94 @@ export class HomePage implements OnInit {
     this.ejerciciosListar();
   }
 
-  cerrarSesion() {
-    this.db.eliminarSesion();
-    // limpiar claves locales asociadas al usuario
-    localStorage.removeItem('user');
-    localStorage.removeItem('idUsuario');
-
+  async cerrarSesion() {
+    await this.auth.cerrarSesion();
     let extras: NavigationExtras = {
       replaceUrl: true
     }
-
     this.router.navigate(['/login'], extras);
   }
   navegarCambiarContrasena() {
-  let extras:  NavigationExtras ={
-    state: { 
-            usuario: this.usuario,
-            contrasena: this.contrasena
-           },
-           replaceUrl: true
+    let extras: NavigationExtras = {
+      state: {
+        usuario: this.usuario,
+        contrasena: this.contrasena
+      },
+      replaceUrl: true
+    };
 
-  } 
-  this.navCtrl.navigateForward('/cambiar-contrasena', extras);
-  } 
+    this.navCtrl.navigateForward('/cambiar-contrasena', extras);
+  }
 
-  async ejerciciosListar(){
-  // obtener la información detallada (incluye descripción) desde /exerciseinfo/ (pedimos español language=4)
-  const lang = '4';
-  console.log('FBP : solicitando exerciseinfo con language=' + lang);
-  let ejercicios_esperados = this.api.obtenerEjerciciosInfo(lang, 100);
-    let ejercicios = await lastValueFrom(ejercicios_esperados);
-  console.log('FBP : ejercicioinfo raw from API ->', ejercicios);
-  let json_texto = JSON.stringify(ejercicios);
-  let json = JSON.parse(json_texto);
-  // loguear los primeros 5 objetos como JSON para inspección
-  console.log('FBP : parsed ejercicioinfo results (first 5) ->', json['results'] ? JSON.stringify(json['results'].slice(0,5)) : JSON.stringify(json));
+  irPrueba404(): void {
+    this.router.navigate(['/perfil-no-existe']);
+  }
 
-    this.lista_ejercicios = [];
-
-    for (let i = 0; json['results'] && i < json['results'].length; i++) {
-      const item = json['results'][i];
-      let ejercicio: any = {};
-    ejercicio.id = item['id'];
-  // intentar obtener el nombre y la descripción desde translations (buscar language=lang)
-  let rawDesc = '';
-  let displayName = '';
-  if (item['translations'] && Array.isArray(item['translations'])) {
-    const tr = item['translations'].find((t: any) => String(t.language) === String(lang));
-    if (tr) {
-      displayName = tr.name || '';
-      if (tr.description) rawDesc = tr.description;
+  cambiarPagina(delta: number) {
+    const nuevaPagina = this.paginaActual + delta;
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
+      this.paginaActual = nuevaPagina;
+      this.actualizarEjerciciosFiltrados();
     }
   }
-  // fallbacks si no hay traducción
-  if (!displayName) displayName = item['name'] || (`Ejercicio N°${item['id']}`);
-  if (!rawDesc) rawDesc = item['description'] || item['short_description'] || '';
-  ejercicio.nombre = displayName;
-  ejercicio.descripcion = rawDesc && rawDesc.trim().length > 0 ? rawDesc : '<i>Sin descripción disponible</i>';
-  console.log(`FBP : ejercicio ${i} -> id=${ejercicio.id} titulo='${ejercicio.nombre}' desc_len=${rawDesc ? rawDesc.length : 0} preview='${(rawDesc||'').slice(0,60)}'`);
-      this.lista_ejercicios.push(ejercicio);
+
+  actualizarEjerciciosFiltrados() {
+    const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
+    const fin = inicio + this.elementosPorPagina;
+    this.ejerciciosFiltrados = this.lista_ejercicios.slice(inicio, fin);
+  }
+
+  async ejerciciosListar() {
+    try {
+      this.lista_ejercicios = [];
+
+      // pedir exerciseinfo solicitando traducciones en español (language=4)
+      const resp$ = this.api.obtenerEjerciciosInfo('4', 200);
+      const json: any = await firstValueFrom(resp$);
+
+      if (json.results && Array.isArray(json.results)) {
+        json.results.forEach((item: any) => {
+          let displayName = item.name || '';
+          if (item.translations && Array.isArray(item.translations)) {
+            const tr = item.translations.find((t: any) => String(t.language) === '4');
+            if (tr?.name) displayName = tr.name;
+          }
+
+          let rawDesc = '';
+          if (item.translations && Array.isArray(item.translations)) {
+            const tr = item.translations.find((t: any) => String(t.language) === '4');
+            if (tr?.description) rawDesc = tr.description;
+          }
+          rawDesc = rawDesc || item.description || item.short_description || '';
+
+          // categoría: usar el mapa local en español si existe, si no usar item.category.name
+          const categoryId = item?.category?.id ?? item?.category;
+          let catName = getCategoryNameEs(categoryId as any) || (item?.category?.name ?? null);
+
+          const ejercicio = {
+            id: item.id,
+            nombre: displayName || `Ejercicio N°${item.id}`,
+            descripcion: rawDesc || '<i>Sin descripción disponible</i>',
+            categoria: catName || 'Sin categoría'
+          };
+
+          // solo agregar si el ejercicio tiene traducción al español (nombre o descripción)
+          if (displayName || rawDesc) {
+            this.lista_ejercicios.push(ejercicio);
+          }
+        });
+
+        // Inicializar la paginación
+        this.totalPaginas = Math.ceil(this.lista_ejercicios.length / this.elementosPorPagina);
+        this.paginaActual = 1;
+        this.actualizarEjerciciosFiltrados();
+      }
+    } catch (error) {
+      console.error('Error al cargar ejercicios:', error);
+      this.lista_ejercicios = [];
+      this.ejerciciosFiltrados = [];
+      this.totalPaginas = 1;
+      this.paginaActual = 1;
     }
   }
 
@@ -114,10 +150,10 @@ export class HomePage implements OnInit {
   const lang = '4';
       let resp: any = null;
       try {
-        const resp$ = this.api.obtenerEjercicioInfoPorId(id, lang);
+        const resp$ = this.api.obtenerEjercicioInfoPorId(id);
         resp = await lastValueFrom(resp$);
       } catch (err) {
-        console.warn('FBP : fallo al obtener description en English para id=', id, err);
+        console.warn('FBP : fallo al obtener description para id=', id, err);
       }
 
       // si no vino descripción, intentar sin language
@@ -134,11 +170,11 @@ export class HomePage implements OnInit {
       // intentar otro idioma (ej. language=1) como último recurso
       if (!resp || !(resp.description || resp.short_description || (resp.translations && resp.translations.length))) {
         try {
-          const resp3$ = this.api.obtenerEjercicioInfoPorId(id, '1');
+          const resp3$ = this.api.obtenerEjercicioInfoPorId(id);
           const resp3: any = await lastValueFrom(resp3$);
           if (resp3) resp = resp3;
         } catch (err) {
-          console.warn('FBP : fallo al obtener description language=1 para id=', id, err);
+          console.warn('FBP : fallo al obtener description para id=', id, err);
         }
       }
 
@@ -161,10 +197,21 @@ export class HomePage implements OnInit {
 
       const alert = await this.alertCtrl.create({
         header: ejercicio.nombre,
-        message: safeHtml,
+        subHeader: ejercicio.categoria,
+        message: descripcion,
+        cssClass: 'alert-description',
         buttons: ['Cerrar']
       });
       await alert.present();
+
+      // Aplicar estilos después de que el alert se muestre
+      const alertElement = document.querySelector('.alert-description');
+      if (alertElement) {
+        const messageElement = alertElement.querySelector('.alert-message');
+        if (messageElement) {
+          messageElement.innerHTML = descripcion;
+        }
+      }
     } catch (e) {
       console.error('FBP : error obtener detalle ejercicio', e);
     }

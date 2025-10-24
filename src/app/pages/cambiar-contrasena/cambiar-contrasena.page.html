@@ -1,40 +1,61 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Cambiar contraseña</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cambiar Contraseña</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen id="pageContent">
+<ion-content class="ion-padding" [fullscreen]="true">
   <ion-card>
+    <ion-card-header>
+      <ion-card-title class="ion-text-center">Actualiza tu Contraseña</ion-card-title>
+    </ion-card-header>
+
     <ion-card-content>
-      <ion-item>
+      <ion-item class="ion-margin-bottom">
         <ion-input
-          [(ngModel)]="contrasenaActual"
+          type="text"
           label="Contraseña Actual"
           labelPlacement="floating"
-          placeholder="Contraseña Actual"
+          [(ngModel)]="contrasenaActual"
+          (ionInput)="mensajeError = ''"
         ></ion-input>
       </ion-item>
 
-      <ion-item>
+      <ion-item class="ion-margin-bottom">
         <ion-input
-          [(ngModel)]="contrasenaNueva"
+          type="text"
           label="Nueva Contraseña"
           labelPlacement="floating"
-          placeholder="Ingresa tu nueva contraseña"
+          [(ngModel)]="nuevaContrasena"
+          (ionInput)="mensajeError = ''"
         ></ion-input>
       </ion-item>
 
-      <ion-item>
+      <ion-item class="ion-margin-bottom">
         <ion-input
-          [(ngModel)]="confirmarContrasena"
+          type="text"
           label="Confirmar Contraseña"
           labelPlacement="floating"
-          placeholder="Confirma tu nueva contraseña"
+          [(ngModel)]="confirmarContrasena"
+          (ionInput)="mensajeError = ''"
         ></ion-input>
       </ion-item>
 
-      <ion-button expand="block" class="ion-margin-top" (click)="cambiarContrasena()">Cambiar contraseña</ion-button>
+      <!-- Mensaje de Error Único (como en Registro) -->
+      <div *ngIf="mensajeError" class="mensaje-error ion-padding-horizontal">
+        {{ mensajeError }}
+      </div>
+
+      <ion-button
+        expand="block"
+        class="ion-margin-top"
+        (click)="cambiarContrasena()"
+      >
+        Actualizar Contraseña
+      </ion-button>
     </ion-card-content>
   </ion-card>
 </ion-content>

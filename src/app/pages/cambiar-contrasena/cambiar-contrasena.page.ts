@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Db } from 'src/app/services/db';
 
 @Component({
@@ -13,41 +13,70 @@ import { Db } from 'src/app/services/db';
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class CambiarContrasenaPage implements OnInit {
-  usuario: string = '';
-  contrasena: string = '';
-  contrasenaNueva: string = '';
+  idUsuario: string = '';
   contrasenaActual: string = '';
+  nuevaContrasena: string = '';
   confirmarContrasena: string = '';
-  
 
-  constructor(private router: Router, private db : Db) { }
+  mensajeError: string = '';
 
-  ngOnInit() {
-  let extras = this.router.getCurrentNavigation();
-  if (extras?.extras.state) {
-    this.usuario = extras.extras.state['usuario'];           
-    this.contrasena = extras.extras.state['contrasena'];
-    
-    const idusuario = extras.extras.state['idusuario'] || localStorage.getItem('idUsuario');
-    if (idusuario) {  
-      this.usuario = idusuario;
+  constructor(private router: Router, private db: Db) { }
+
+  async ngOnInit() {
+    const sesion = await this.db.validarSesion();
+    if (sesion && sesion.idusuario) {
+      this.idUsuario = sesion.idusuario;
+    } else {
+      this.router.navigate(['/login'], { replaceUrl: true });
     }
-  } else {
-    
-    const idusuario = localStorage.getItem('idUsuario');
-    if (idusuario) this.usuario = idusuario;
   }
-}
-  
-  cambiarContrasena(){
-    this.db.cambiarContrasena(this.usuario, this.contrasena, this.contrasenaNueva);
-    
-    let extras: NavigationExtras = {
-      replaceUrl: true
-    }
-    
-    this.router.navigate(['/login', extras]); 
 
-    
+  private esContrasenaSegura(contrasena: string): boolean {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(contrasena);
+  }
+
+  async cambiarContrasena() {
+    this.mensajeError = '';
+
+    if (!this.contrasenaActual || !this.nuevaContrasena || !this.confirmarContrasena) {
+      this.mensajeError = 'Por favor, completa todos los campos.';
+      return;
+    }
+    if (this.nuevaContrasena === this.contrasenaActual) {
+      this.mensajeError = 'La nueva contraseña no puede ser igual a la actual.';
+      return;
+    }
+    if (this.nuevaContrasena !== this.confirmarContrasena) {
+      this.mensajeError = 'Las nuevas contraseñas no coinciden.';
+      return;
+    }
+    if (!this.esContrasenaSegura(this.nuevaContrasena)) {
+      this.mensajeError = 'La contraseña debe tener: 8+ caracteres, mayúscula, minúscula, número y un carácter especial.';
+      return;
+    }
+
+    try {
+      const esValida = await this.db.validarContrasena(this.idUsuario, this.contrasenaActual);
+      if (!esValida) {
+        this.mensajeError = 'La contraseña actual es incorrecta.';
+        return;
+      }
+
+      const actualizado = await this.db.actualizarContrasena(this.idUsuario, this.nuevaContrasena);
+      if (actualizado) {
+        // Unica y exclusivamente eliminamos la sesión. El AuthGuard hará el resto.
+        await this.db.eliminarSesion();
+
+        // Navegamos a la raíz para que el AuthGuard se dispare y redirija a /login
+        this.router.navigate(['/'], { replaceUrl: true });
+
+      } else {
+        this.mensajeError = 'Ocurrió un error inesperado al actualizar.';
+      }
+    } catch (error) {
+      console.error('FBP: Error en el proceso de cambio de contraseña', error);
+      this.mensajeError = 'Error en el servidor. Intente más tarde.';
+    }
   }
 }

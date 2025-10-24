@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cambiar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+    <!-- Contraseña Actual -->
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="floating">Contraseña Actual</ion-label>
+      <ion-input
+        type="text"
+        formControlName="currentPassword"
+      ></ion-input>
+    </ion-item>
+    <div class="error-container" *ngIf="currentPassword?.invalid && currentPassword?.touched">
+      <ion-text color="danger" *ngIf="currentPassword?.errors?.['required']">
+        La contraseña actual es requerida
+      </ion-text>
+    </div>
+
+    <!-- Nueva Contraseña -->
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="floating">Nueva Contraseña</ion-label>
+      <ion-input
+        type="text"
+        formControlName="newPassword"
+      ></ion-input>
+    </ion-item>
+    <div class="error-container" *ngIf="newPassword?.touched">
+      <ion-text color="danger" *ngFor="let error of getPasswordErrors()">
+        {{ error }}
+      </ion-text>
+    </div>
+
+    <!-- Confirmar Nueva Contraseña -->
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="floating">Confirmar Nueva Contraseña</ion-label>
+      <ion-input
+        type="text"
+        formControlName="confirmPassword"
+      ></ion-input>
+    </ion-item>
+    <div class="error-container" *ngIf="confirmPassword?.touched">
+      <ion-text color="danger" *ngFor="let error of getConfirmPasswordErrors()">
+        {{ error }}
+      </ion-text>
+    </div>
+
+    <!-- Errores agregados (antes del botón) -->
+    <div class="form-errors" *ngIf="getFormErrors().length > 0">
+      <ion-text color="danger" *ngFor="let err of getFormErrors()">
+        {{ err }}
+      </ion-text>
+    </div>
+
+    <!-- Botón Guardar -->
+    <ion-button
+      expand="block"
+      type="submit"
+      [disabled]="changePasswordForm.invalid"
+    >
+      Cambiar Contraseña
+    </ion-button>
+  </form>
+</ion-content>

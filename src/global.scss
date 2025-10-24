@@ -18,6 +18,46 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
+/* Estilos para alerts de error */
+.error-alert {
+  .alert-wrapper {
+    --background: var(--ion-background-color, #121212);
+  }
+  
+  .alert-head {
+    padding-bottom: 8px;
+    
+    .alert-title {
+      color: var(--ion-color-danger);
+    }
+  }
+  
+  .alert-message {
+    color: var(--ion-text-color);
+    white-space: pre-line;
+    text-align: left;
+  }
+
+  .error-button {
+    color: var(--ion-color-danger);
+  }
+}
+
+/* Estilos globales para alerts con descripciones HTML */
+.alert-description {
+  .alert-message {
+    ol, ul {
+      padding-left: 20px !important;
+      margin: 10px 0 !important;
+      
+      li {
+        margin: 5px 0 !important;
+        list-style-position: outside !important;
+      }
+    }
+  }
+}
+
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";

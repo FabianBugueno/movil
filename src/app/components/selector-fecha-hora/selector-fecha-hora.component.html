@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Seleccionar fecha y hora</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">Cancelar</ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm()" [strong]="true">OK</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- 1. Calendario para la fecha -->
+  <ion-datetime
+    presentation="date"
+    [(ngModel)]="dateValue"
+    locale="es-ES"
+  ></ion-datetime>
+
+  <!-- 2. Selector de hora: input nativo cuando está soportado, sino fallback con ion-datetime -->
+  <ng-container *ngIf="supportsTimeInput; else fallbackTime">
+    <ion-item>
+      <ion-label>Hora</ion-label>
+      <ion-input type="time" [(ngModel)]="timeValue" placeholder="HH:MM"></ion-input>
+    </ion-item>
+  </ng-container>
+  <ng-template #fallbackTime>
+    <ion-item>
+      <ion-label>Hora</ion-label>
+    </ion-item>
+    <ion-datetime
+      presentation="time"
+      display-format="HH:mm"
+      [(ngModel)]="timeValue"
+      locale="es-ES"
+    ></ion-datetime>
+  </ng-template>
+
+  <!-- 3. Selector de duración, ahora siempre visible -->
+  <ion-item class="ion-margin-top">
+    <ion-label>Duración (minutos)</ion-label>
+    <ion-input type="number" [(ngModel)]="duracion" min="1"></ion-input>
+  </ion-item>
+
+</ion-content>

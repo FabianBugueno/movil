@@ -1,44 +1,100 @@
 <ion-content [fullscreen]="true" id="pageContent">
   <div class="home-titulo">
-    <ion-text color="dark">
-      <h1 style="margin: 0;">Bienvenido/a, {{usuario}}</h1>
-    </ion-text>
-    <ion-icon name="create-outline" slot ="icon-only" (click)="navegarCambiarContrasena()"></ion-icon>
-    <ion-button fill="clear" (click)="cerrarSesion()" class="cerrar-sesion-btn">
-      <ion-icon name="log-out-outline"></ion-icon>
-    </ion-button>
+    <div class="titulo-bg">
+        <ion-text color="dark" class="home-title-text">
+          <h1 class="title-home welcome-name">Bienvenido/a, {{ usuario | titlecase }}</h1>
+        </ion-text>
+      <ion-icon name="create-outline" slot="icon-only" (click)="navegarCambiarContrasena()"></ion-icon>
+    </div>
   </div>
-  <div class="home-cards">
-    <ion-card>
-      <div class="card-content-flex">
-        <ion-icon name="list-outline" ></ion-icon>
-        <span class="card-title">Mis Rutinas</span>
-      </div>
-    </ion-card>
-
-    <ion-card>
-      <div class="card-content-flex">
-        <ion-icon name="calendar-outline" ></ion-icon>
-        <span class="card-title">Calendario</span>
-      </div>
-    </ion-card>
-
-    <ion-card>
-      <div class="card-content-flex">
-        <ion-icon name="person-circle-outline" ></ion-icon>
-        <span class="card-title">Perfil</span>
-      </div>
-    </ion-card>
+  
+  <div class="ion-padding-horizontal">
+    <div class="rutinas-section">
+      <ion-text class="title-home">
+        <h1>Mis Rutinas</h1>
+      </ion-text>
+      <ion-button fill="clear" routerLink="/rutinas/crear">
+        <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+      </ion-button>
+    </div>
+    
+    <app-lista-rutinas [isHomePage]="true"></app-lista-rutinas>
   </div>
 
-  <ion-list>
-    <ion-item *ngFor="let x of lista_ejercicios; let i = index" (click)="verDescripcion(x)">
-      <ion-icon name="barbell-outline" slot="start"></ion-icon>
-      <ion-label>
-        <div class="ej-id">Ejercicio N° {{i + 1}}</div>
-        <h2 class="ej-nombre">{{x.nombre}}</h2>
-        <p class="ej-descripcion" [innerHTML]="x.descripcion"></p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  <ion-text class="title-home">
+    <h1>Ejercicios Disponibles</h1>
+  </ion-text>
+
+  <div class="content-wrapper">
+    <ion-list class="ejercicios-lista">
+      <ion-item *ngFor="let ejercicio of ejerciciosFiltrados; let i = index" button (click)="verDescripcion(ejercicio)" class="list-item">
+        <ion-label>
+          <div class="ej-id">Ejercicio N° {{ i + 1 }}</div>
+          <h2 class="ej-nombre">{{ ejercicio.nombre }}</h2>
+          <div class="ej-categoria">{{ ejercicio.categoria }}</div>
+          <p class="ej-descripcion" [innerHTML]="ejercicio.descripcion"></p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Paginación -->
+    <div class="paginacion-container">
+      <ion-item lines="none" class="paginacion-item">
+        <ion-buttons slot="start">
+          <ion-button (click)="cambiarPagina(-1)" [disabled]="paginaActual === 1">
+            <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-label class="ion-text-center">
+          Página {{ paginaActual }} de {{ totalPaginas }}
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-button (click)="cambiarPagina(1)" [disabled]="paginaActual === totalPaginas">
+            <ion-icon slot="icon-only" name="chevron-forward"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </div>
+  </div>
 </ion-content>
+
+<ion-footer class="home-footer">
+  <ion-toolbar>
+    <div class="home-cards">
+      <ion-card button class="footer-card">
+        <div class="card-content-flex">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span class="card-title">Calendario</span>
+        </div>
+      </ion-card>
+
+      <ion-card button class="footer-card" routerLink="/rutinas">
+        <div class="card-content-flex">
+          <ion-icon name="list-outline"></ion-icon>
+          <span class="card-title">Mis Rutinas</span>
+        </div>
+      </ion-card>
+
+      <ion-card button class="footer-card highlight" routerLink="/rutinas/crear">
+        <div class="card-content-flex">
+          <ion-icon name="add-circle"></ion-icon>
+          <span class="card-title">Crear Rutina</span>
+        </div>
+      </ion-card>
+
+      <ion-card button class="footer-card" (click)="irPrueba404()" role="button" aria-label="Perfil (prueba 404)">
+        <div class="card-content-flex">
+          <ion-icon name="person-circle-outline"></ion-icon>
+          <span class="card-title">Perfil</span>
+        </div>
+      </ion-card>
+
+      <ion-card button class="footer-card" (click)="cerrarSesion()" role="button" aria-label="Cerrar sesión">
+        <div class="card-content-flex">
+          <ion-icon name="exit-outline"></ion-icon>
+          <span class="card-title">Salir</span>
+        </div>
+      </ion-card>
+    </div>
+  </ion-toolbar>
+</ion-footer>

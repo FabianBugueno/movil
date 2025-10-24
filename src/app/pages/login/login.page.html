@@ -6,8 +6,15 @@
           <ion-icon name="flash-outline" class="icon-flash"></ion-icon>
           <ion-card-title class="login-title">FITPLAN</ion-card-title>
         </ion-card-header>
+
         <ion-card-content>
-          <ion-item>
+          <!-- Mensaje de Éxito -->
+          <div *ngIf="mensajeExito" class="mensaje-exito ion-text-center ion-padding-bottom">
+            <ion-note color="success">{{ mensajeExito }}</ion-note>
+          </div>
+
+          <ion-item class="input">
+            <ion-icon slot="start" name="person-outline" class="icon-input"></ion-icon>
             <ion-input
               [(ngModel)]="usuario"
               label="Usuario"
@@ -15,25 +22,33 @@
               placeholder="Ingresa tu usuario"
             ></ion-input>
           </ion-item>
+
           <hr />
-          <ion-item>
+
+          <ion-item class="input">
+            <ion-icon slot="start" name="lock-closed-outline" class="icon-input"></ion-icon>
             <ion-input
               [(ngModel)]="contrasena"
-              type="password"
+              [type]="showPassword ? 'text' : 'password'"
               labelPlacement="floating"
               label="Contraseña"
               placeholder="Ingresa tu contraseña"
-            >
-              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
-            </ion-input>
+            ></ion-input>
+
+            <ion-button slot="end" fill="clear" class="pwd-toggle" (click)="togglePassword()" aria-label="Mostrar contraseña">
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
           </ion-item>
+
           <div *ngIf="mensajeError" class="mensaje-error">
             {{ mensajeError }}
           </div>
-          <ion-button id="btn-iniciar" (click)="iniciarSesion()" expand="block" color="primary" class="ion-margin-top">
+
+          <ion-button class="btn-iniciar ion-margin-top" expand="block" (click)="iniciarSesion()">
             Iniciar Sesión
           </ion-button>
-          <ion-button (click)="registro()" expand="block" fill="outline" color="secondary" class="ion-margin-top">
+
+          <ion-button class="btn-registrarse ion-margin-top" expand="block" fill="outline" (click)="registro()">
             Registrarse
           </ion-button>
         </ion-card-content>

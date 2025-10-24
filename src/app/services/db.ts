@@ -12,6 +12,48 @@ export class Db {
     this.crearTablas().catch(e => console.error('FBP : crearTablas fallo', e));
   }
 
+  async validarContrasena(usuario: string, contrasena: string): Promise<boolean> {
+    try {
+      const db = await this.sqlite.create({
+        name: 'data.db',
+        location: 'default'
+      });
+
+      const result = await db.executeSql(
+        'SELECT contrasena FROM usuario WHERE idusuario = ?',
+        [usuario]
+      );
+
+      if (result.rows.length > 0) {
+        const storedPassword = result.rows.item(0).contrasena;
+        return storedPassword === contrasena;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error validando contraseña:', error);
+      return false;
+    }
+  }
+
+  async actualizarContrasena(usuario: string, nuevaContrasena: string): Promise<boolean> {
+    try {
+      const db = await this.sqlite.create({
+        name: 'data.db',
+        location: 'default'
+      });
+
+      await db.executeSql(
+        'UPDATE usuario SET contrasena = ? WHERE idusuario = ?',
+        [nuevaContrasena, usuario]
+      );
+
+      return true;
+    } catch (error) {
+      console.error('Error actualizando contraseña:', error);
+      return false;
+    }
+  }
+
   crearTablas(): Promise<any> {
 
     return this.sqlite.create({
@@ -19,12 +61,12 @@ export class Db {
       location: 'default'
     })
     .then((db: SQLiteObject) => {
-      
+
       return db.executeSql(
         'CREATE TABLE IF NOT EXISTS usuario (idusuario VARCHAR(30), nombre VARCHAR(35), apellido VARCHAR(35), correo VARCHAR(75), contrasena VARCHAR(30))',
         []
       )
-      
+
       .then(() => db.executeSql(
         'CREATE TABLE IF NOT EXISTS sesion (idusuario VARCHAR(30), contrasena VARCHAR(30))',
         []
@@ -43,10 +85,15 @@ export class Db {
       location: 'default'
     })
     .then((db: SQLiteObject) => {
-      return db.executeSql(
-        'INSERT INTO sesion (idusuario, contrasena) VALUES (?, ?)',
-        [usuario, contrasena]
-      );
+      // Primero, borramos cualquier sesión existente para asegurar que solo haya una activa.
+      return db.executeSql('DELETE FROM sesion', [])
+        .then(() => {
+          // Ahora, insertamos la nueva y única sesión.
+          return db.executeSql(
+            'INSERT INTO sesion (idusuario, contrasena) VALUES (?, ?)',
+            [usuario, contrasena]
+          );
+        });
     })
     .then(() => {
       console.log('FBP : Sesión almacenada con éxito.');
@@ -57,35 +104,39 @@ export class Db {
       throw e;
     });
   }
+
   eliminarSesion(): Promise<any> {
     return this.sqlite.create({
       name: 'data.db',
-      location: 'default' 
+      location: 'default'
     })
     .then((db: SQLiteObject) => {
+      // Elimina la sesión de la base de datos
       return db.executeSql(
         'DELETE FROM sesion',
         []
       );
     })
     .then(() => {
-      console.log('FBP : Sesión eliminada con éxito.');
+      // Y también elimina los datos de sesión de localStorage para una limpieza completa
+      localStorage.removeItem('user');
+      localStorage.removeItem('idUsuario');
+      console.log('FBP : Sesión de BD y localStorage eliminada con éxito.');
       return true;
-    }
-    )
+    })
     .catch(e => {
       console.error('FBP : No se pudo eliminar la sesión', e);
       throw e;
-    }
-    );
+    });
   }
+
   almacenarUsuario(usuario: string, nombre: string, apellidos: string, correo: string, contrasena: string): Promise<any> {
     return this.sqlite.create({
       name: 'data.db',
       location: 'default'
     })
     .then((db: SQLiteObject) => {
-     
+
       return db.executeSql('SELECT count(*) AS cantidad FROM usuario WHERE idusuario = ?', [usuario])
         .then(res => {
           const cantidad = res.rows.item(0).cantidad;
@@ -107,7 +158,7 @@ export class Db {
       throw e;
     });
   }
-  
+
   loginUsuario(usuario: string, contrasena: string): Promise<any> {
   return this.sqlite.create({
     name: 'data.db',
@@ -132,6 +183,7 @@ export class Db {
     throw e;
   });
 }
+
 validarSesion(): Promise<any> {
   return this.sqlite.create({
     name: 'data.db',
@@ -146,9 +198,9 @@ validarSesion(): Promise<any> {
   .then((data) => {
     if (data.rows.length > 0) {
       const usuario = data.rows.item(0);
-      return usuario; 
+      return usuario;
     } else {
-      return null; 
+      return null;
     }
   })
   .catch(e => {
@@ -156,32 +208,4 @@ validarSesion(): Promise<any> {
     throw e;
   });
 }
-  cambiarContrasena(idUsuario: string, contrasenaActual: string, contrasenaNueva: string): Promise<boolean> {
-  return this.sqlite.create({
-    name: 'data.db',
-    location: 'default'
-  })
-  .then((db: SQLiteObject) => {
-    return db.executeSql(
-      'UPDATE usuario SET contrasena = ? WHERE idusuario = ? AND contrasena = ?',
-      [contrasenaNueva, idUsuario, contrasenaActual]
-    ).then((res) => {
-      if (res.rowsAffected > 0) {
-        console.log('FBP : Contraseña actualizada con éxito');
-        return true;
-      } else {
-        console.log('FBP : No se encontró el usuario o la contraseña actual es incorrecta');
-        return false;
-      }
-    }).catch(e => {
-      console.error('FBP : Error al actualizar la contraseña', e);
-      return false;
-    });
-  })
-  .catch(e => {
-    console.error('FBP : Error al abrir la base de datos', e);
-    return false;
-  });
 }
-}
-
