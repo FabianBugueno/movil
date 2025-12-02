@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, NavController } from '@ionic/angular';
+import { IonicModule, NavController, AlertController, ToastController } from '@ionic/angular';
 import { NgIf, CommonModule } from '@angular/common'; // Import CommonModule here
 import { Db } from 'src/app/services/db';
 import { AuthService } from 'src/app/services/auth.service';
+import { EmailRecoveryService } from 'src/app/services/email-recovery.service';
 
 @Component({
   selector: 'app-login',
@@ -20,11 +21,16 @@ export class LoginPage implements OnInit {
   mensajeExito: string = ''; // Para el mensaje de éxito
   showPassword = false;
 
-  constructor(private router: Router, private navCtrl: NavController, private db: Db, private auth: AuthService) {
+  constructor(private router: Router, private navCtrl: NavController, private db: Db, private auth: AuthService, private alertCtrl: AlertController, private toastCtrl: ToastController, private emailRecovery: EmailRecoveryService) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state && navigation.extras.state['mensajeExito']) {
       this.mensajeExito = navigation.extras.state['mensajeExito'];
     }
+  }
+
+  openRecovery() {
+    // Navegar a página de recuperación en vez de usar modal
+    this.router.navigate(['/recuperar-contrasena']);
   }
 
   ngOnInit() {}
@@ -35,8 +41,7 @@ export class LoginPage implements OnInit {
 
   async iniciarSesion() {
     this.mensajeError = '';
-    this.mensajeExito = ''; // Limpiar mensajes al intentar iniciar sesión
-
+    this.mensajeExito = ''; 
     if (!this.usuario || !this.contrasena) {
       this.mensajeError = 'Completa usuario y contraseña.';
       return;

@@ -4,6 +4,7 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { lastValueFrom, firstValueFrom } from 'rxjs';
 import { Api } from 'src/app/services/api';
+import { ExerciseCacheService } from 'src/app/services/exercise-cache.service';
 import { getCategoryNameEs } from 'src/app/data/exercise-categories';
 import { AlertController } from '@ionic/angular';
 import { Db } from 'src/app/services/db';
@@ -26,7 +27,7 @@ export class HomePage implements OnInit {
   elementosPorPagina = 10;
   totalPaginas = 1;
 
-  constructor(private router: Router, private navCtrl: NavController, private db : Db, private api : Api, private alertCtrl: AlertController, private auth: AuthService) {}
+  constructor(private router: Router, private navCtrl: NavController, private db : Db, private api : Api, private exerciseCache: ExerciseCacheService, private alertCtrl: AlertController, private auth: AuthService) {}
 
   ngOnInit() {
     
@@ -89,55 +90,61 @@ export class HomePage implements OnInit {
 
   async ejerciciosListar() {
     try {
+      // Try cached exercises first (synchronous fast path)
+      const cachedSync = this.exerciseCache.getAllCachedExercisesSync();
       this.lista_ejercicios = [];
+      const source = (cachedSync && cachedSync.length > 0) ? cachedSync : await this.fetchAndMapExercisesFromApi();
+      // Map source objects into the simplified ejercicio shape
+      source.forEach((item: any) => {
+        const id = item.id;
+        let displayName = item.name || '';
+        if (item.translations && Array.isArray(item.translations)) {
+          const tr = item.translations.find((t: any) => String(t.language) === '4');
+          if (tr?.name) displayName = tr.name;
+        }
 
-      // pedir exerciseinfo solicitando traducciones en español (language=4)
-      const resp$ = this.api.obtenerEjerciciosInfo('4', 200);
-      const json: any = await firstValueFrom(resp$);
+        let rawDesc = '';
+        if (item.translations && Array.isArray(item.translations)) {
+          const tr = item.translations.find((t: any) => String(t.language) === '4');
+          if (tr?.description) rawDesc = tr.description;
+        }
+        rawDesc = rawDesc || item.description || item.short_description || '';
 
-      if (json.results && Array.isArray(json.results)) {
-        json.results.forEach((item: any) => {
-          let displayName = item.name || '';
-          if (item.translations && Array.isArray(item.translations)) {
-            const tr = item.translations.find((t: any) => String(t.language) === '4');
-            if (tr?.name) displayName = tr.name;
-          }
+        const categoryId = item?.category?.id ?? item?.category;
+        let catName = getCategoryNameEs(categoryId as any) || (item?.category?.name ?? null);
 
-          let rawDesc = '';
-          if (item.translations && Array.isArray(item.translations)) {
-            const tr = item.translations.find((t: any) => String(t.language) === '4');
-            if (tr?.description) rawDesc = tr.description;
-          }
-          rawDesc = rawDesc || item.description || item.short_description || '';
+        const ejercicio = {
+          id: id,
+          nombre: displayName || `Ejercicio N°${id}`,
+          descripcion: rawDesc || '<i>Sin descripción disponible</i>',
+          categoria: catName || 'Sin categoría'
+        };
 
-          // categoría: usar el mapa local en español si existe, si no usar item.category.name
-          const categoryId = item?.category?.id ?? item?.category;
-          let catName = getCategoryNameEs(categoryId as any) || (item?.category?.name ?? null);
+        if (displayName || rawDesc) this.lista_ejercicios.push(ejercicio);
+      });
 
-          const ejercicio = {
-            id: item.id,
-            nombre: displayName || `Ejercicio N°${item.id}`,
-            descripcion: rawDesc || '<i>Sin descripción disponible</i>',
-            categoria: catName || 'Sin categoría'
-          };
-
-          // solo agregar si el ejercicio tiene traducción al español (nombre o descripción)
-          if (displayName || rawDesc) {
-            this.lista_ejercicios.push(ejercicio);
-          }
-        });
-
-        // Inicializar la paginación
-        this.totalPaginas = Math.ceil(this.lista_ejercicios.length / this.elementosPorPagina);
-        this.paginaActual = 1;
-        this.actualizarEjerciciosFiltrados();
-      }
+      // Inicializar la paginación
+      this.totalPaginas = Math.ceil(this.lista_ejercicios.length / this.elementosPorPagina);
+      this.paginaActual = 1;
+      this.actualizarEjerciciosFiltrados();
     } catch (error) {
       console.error('Error al cargar ejercicios:', error);
       this.lista_ejercicios = [];
       this.ejerciciosFiltrados = [];
       this.totalPaginas = 1;
       this.paginaActual = 1;
+    }
+  }
+
+  private async fetchAndMapExercisesFromApi(): Promise<any[]> {
+    try {
+      const resp$ = this.api.obtenerEjerciciosInfo('4', 200);
+      const json: any = await firstValueFrom(resp$);
+      const list = Array.isArray(json) ? json : (json?.results ?? json?.data ?? []);
+      return list;
+    } catch (e) {
+      console.warn('Error fetching exercises from API', e);
+      return [];
     }
   }
 
@@ -150,8 +157,7 @@ export class HomePage implements OnInit {
   const lang = '4';
       let resp: any = null;
       try {
-        const resp$ = this.api.obtenerEjercicioInfoPorId(id);
-        resp = await lastValueFrom(resp$);
+        resp = await this.exerciseCache.getExercise(id);
       } catch (err) {
         console.warn('FBP : fallo al obtener description para id=', id, err);
       }

@@ -7,6 +7,7 @@ import { RutinaService } from '../../services/rutina.service';
 import { Rutina } from '../../models/rutina.interface';
 import { Api } from '../../services/api';
 import { firstValueFrom } from 'rxjs';
+import { ExerciseCacheService } from '../../services/exercise-cache.service';
 import { getCategoryNameEs } from '../../data/exercise-categories';
 
 @Component({
@@ -35,6 +36,7 @@ export class FormRutinaComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private api: Api,
+    private exerciseCache: ExerciseCacheService,
     private alertController: AlertController
   ) {
     this.rutinaForm = this.fb.group({
@@ -46,7 +48,8 @@ export class FormRutinaComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.cargarEjercicios();
+    // cargar ejercicios desde caché en memoria (no bloquear UI)
+    this.cargarEjercicios();
     this.rutinaId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.rutinaId) {
       this.editando = true;
@@ -75,11 +78,11 @@ export class FormRutinaComponent implements OnInit {
     }
   }
 
-  async cargarEjercicios() {
-    const resp$ = this.api.obtenerEjerciciosInfo('4', 200);
-    const json: any = await firstValueFrom(resp$);
-    
-    this.ejerciciosDisponibles = (json.results || []).map((item: any) => {
+  cargarEjercicios() {
+    const jsonList = this.exerciseCache.getAllCachedExercisesSync();
+    const list = Array.isArray(jsonList) ? jsonList : [];
+
+    this.ejerciciosDisponibles = list.map((item: any) => {
       let displayName = item.name || '';
       if (item.translations && Array.isArray(item.translations)) {
         const tr = item.translations.find((t: any) => String(t.language) === '4');

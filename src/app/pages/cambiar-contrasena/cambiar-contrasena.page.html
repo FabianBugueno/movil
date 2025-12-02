@@ -44,18 +44,17 @@
         ></ion-input>
       </ion-item>
 
-      <!-- Mensaje de Error Único (como en Registro) -->
-      <div *ngIf="mensajeError" class="mensaje-error ion-padding-horizontal">
-        {{ mensajeError }}
-      </div>
+        <div *ngIf="mensajeError" class="mensaje-error ion-padding-horizontal">
+          {{ mensajeError }}
+        </div>
 
-      <ion-button
-        expand="block"
-        class="ion-margin-top"
-        (click)="cambiarContrasena()"
-      >
-        Actualizar Contraseña
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
-</ion-content>
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          (click)="cambiarContrasena()"
+        >
+          Actualizar Contraseña
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>

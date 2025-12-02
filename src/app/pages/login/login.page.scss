@@ -182,3 +182,18 @@ ion-item .pwd-toggle ion-icon {
   outline: none !important;
   box-shadow: 0 0 20px rgba(200, 0, 255, 0.6) !important;
 }
+.text-pass-reco {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem; /* poco espacio alrededor */
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  /* permitir que el texto sea seleccionable */
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  cursor: text;
+}

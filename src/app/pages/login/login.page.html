@@ -35,10 +35,13 @@
               placeholder="Ingresa tu contraseña"
             ></ion-input>
 
+          
             <ion-button slot="end" fill="clear" class="pwd-toggle" (click)="togglePassword()" aria-label="Mostrar contraseña">
               <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </ion-button>
           </ion-item>
+          <ion-button class="text-pass-reco" fill="clear" (click)="openRecovery()">¿Olvidaste tu contraseña?</ion-button>
+
 
           <div *ngIf="mensajeError" class="mensaje-error">
             {{ mensajeError }}

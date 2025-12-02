@@ -69,17 +69,18 @@ app-lista-rutinas {
 .content-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 350px); // Ajusta este valor según el tamaño de tu header y footer
+  padding-bottom: 100px;
 }
 
 .ejercicios-lista {
   flex: 1;
   overflow-y: auto;
   margin-bottom: 16px;
+  padding-bottom: 80px;
 }
 
 .paginacion-container {
-  margin-bottom: 16px;
+  margin-bottom: 100px;
   background: var(--ion-background-color);
   z-index: 1;
   
@@ -99,25 +100,12 @@ app-lista-rutinas {
 }
 
 ion-content {
-  --padding-bottom: 80px; // Ajusta este valor según el tamaño de tu footer
+  --padding-bottom: 100px;
+  --ion-safe-area-bottom: 100px;
 }
 
 .cerrar-sesion-btn {
   margin-right: 0;
-}
-
-.ejercicios-lista {
-  margin-bottom: 80px; // Espacio para el footer
-  padding-bottom: 16px;
-}
-
-.paginacion-item {
-  --background: var(--ion-color-light);
-  margin: 8px 16px;
-  border-radius: 8px;
-  position: sticky;
-  bottom: 0;
-  z-index: 1000;
 }
 
 .rutinas-section {

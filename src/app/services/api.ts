@@ -11,11 +11,11 @@ export class Api {
   apiKey = '57229188aa3ce03c9c50814ba537249fbf9d53ec';
 
   categoriasMap: Record<number, string> = {};
-  // removed language-specific caching; categories handled locally now
+  
 
   constructor(private http: HttpClient) {}
   
-  // Note: category names are provided from local mapping in src/app/data/exercise-categories.ts
+
 
   getCategoriaNombre(id: number | string | undefined): string | null {
     if (id == null) return null;

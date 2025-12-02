@@ -4,6 +4,7 @@ import { IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Api } from '../../services/api';
 import { firstValueFrom } from 'rxjs';
+import { ExerciseCacheService } from '../../services/exercise-cache.service';
 import { getCategoryNameEs } from '../../data/exercise-categories';
 import { RutinaService } from '../../services/rutina.service';
 import { DatetimePickerComponent } from '../selector-fecha-hora/selector-fecha-hora.component';
@@ -30,6 +31,7 @@ export class DetalleRutinaComponent implements OnInit {
     private alertController: AlertController,
     private modalCtrl: ModalController,
     private api: Api,
+    private exerciseCache: ExerciseCacheService,
     private router: Router
   ) {}
 
@@ -67,7 +69,8 @@ export class DetalleRutinaComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.cargarEjercicios();
+    // cargar ejercicios desde caché en memoria (no bloquear UI)
+    this.cargarEjercicios();
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.rutinaService.getRutinaById(id).subscribe(rutina => {
@@ -77,11 +80,12 @@ export class DetalleRutinaComponent implements OnInit {
     }
   }
 
-  async cargarEjercicios() {
-    const resp$ = this.api.obtenerEjerciciosInfo('4', 200);
-    const json: any = await firstValueFrom(resp$);
-    
-    this.ejerciciosDisponibles = (json.results || []).map((item: any) => {
+  cargarEjercicios() {
+    // Prefer local in-memory cache for fast UI. Falls back to API if cache empty.
+    const jsonList = this.exerciseCache.getAllCachedExercisesSync();
+    const list = Array.isArray(jsonList) ? jsonList : [];
+
+    this.ejerciciosDisponibles = list.map((item: any) => {
       let displayName = item.name || '';
       if (item.translations && Array.isArray(item.translations)) {
         const tr = item.translations.find((t: any) => String(t.language) === '4');

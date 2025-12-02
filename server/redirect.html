@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Abriendo FitPlan…</title>
+  <style>body{font-family:system-ui,Arial;margin:24px;color:#222}a{color:#06c}</style>
+</head>
+<body>
+  <h2>Abriendo FitPlan…</h2>
+  <p>Si tienes la app instalada se intentará abrir automáticamente. Si no, copia y pega el enlace que aparece abajo en el navegador del móvil.</p>
+
+  <script>
+    // Read query params: /redirect.html?user=foo&token=abc
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get('user') || '';
+    const token = params.get('token') || '';
+    const schemeUrl = `fitplan://cambiar-contrasena?user=${encodeURIComponent(user)}&token=${encodeURIComponent(token)}`;
+
+    // Attempt navigation to the app scheme
+    window.location.href = schemeUrl;
+
+    // Also provide a visible fallback link for user to tap/copy
+    const fallback = document.createElement('div');
+    fallback.style.marginTop = '18px';
+    fallback.innerHTML = `
+      <p style="word-break: break-all; color:#3b82f6">Si no se abrió la app, pulsa <a href="${schemeUrl}">aquí</a> o copia/pega este enlace:<br/><code>${schemeUrl}</code></p>
+    `;
+    // Add fallback after a short delay so auto redirect tries first
+    setTimeout(() => document.body.appendChild(fallback), 700);
+  </script>
+</body>
+</html>

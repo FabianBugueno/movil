@@ -1,0 +1,16 @@
+{
+  "name": "fitplan-recovery-server",
+  "version": "1.0.0",
+  "description": "Demo password recovery server for FitPlan (uses nodemailer + mailjs or Gmail SMTP)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.7"
+  }
+}

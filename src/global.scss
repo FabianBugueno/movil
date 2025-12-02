@@ -72,13 +72,23 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* Forzar modo oscuro siempre */
+@import "@ionic/angular/css/palettes/dark.always.css";
 
 @font-face {
   font-family: 'Avenir';
   src: url('assets/Avenir_Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+/* Asegurar que el fondo detrás de gestos es negro */
+html, body {
+  background-color: #000;
+  height: 100%;
+  width: 100%;
+}
+
+ion-app {
+  background-color: #000;
 }

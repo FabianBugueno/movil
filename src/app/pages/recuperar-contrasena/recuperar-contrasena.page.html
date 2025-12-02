@@ -1,0 +1,158 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="cancelar()" defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Recuperar Contraseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [fullscreen]="true">
+  <!-- PASO 1: Solicitar Usuario -->
+  <div *ngIf="currentStep === 'usuario'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">¿Olvidaste tu contraseña?</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="ion-text-center ion-margin-bottom" style="color: #6b7280; font-size: 0.95rem;">
+          Ingresa tu usuario para recibir un código de recuperación por correo electrónico.
+        </p>
+
+        <ion-item class="ion-margin-bottom">
+          <ion-input
+            type="text"
+            label="Usuario"
+            labelPlacement="floating"
+            [(ngModel)]="usuarioIngresado"
+            (ionInput)="mensajeError = ''"
+          ></ion-input>
+        </ion-item>
+
+        <div *ngIf="mensajeError" class="mensaje-error ion-padding-horizontal">
+          {{ mensajeError }}
+        </div>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          (click)="solicitarCodigo()"
+          [disabled]="isLoading"
+        >
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          {{ isLoading ? 'Enviando...' : 'Enviar Código' }}
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" (click)="cancelar()">
+          Cancelar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- PASO 2: Ingresar Código -->
+  <div *ngIf="currentStep === 'codigo'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">Ingresa el Código</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="ion-text-center ion-margin-bottom" style="color: #6b7280; font-size: 0.95rem;">
+          Te hemos enviado un código a tu correo electrónico. Revisa tu bandeja y pégalo aquí.
+        </p>
+
+        <ion-item class="ion-margin-bottom">
+          <ion-input
+            type="text"
+            label="Código de recuperación"
+            labelPlacement="floating"
+            [(ngModel)]="codigoIngresado"
+            (ionInput)="mensajeError = ''"
+            placeholder="p. ej. A1B2C3D4"
+          ></ion-input>
+        </ion-item>
+
+        <div *ngIf="mensajeError" class="mensaje-error ion-padding-horizontal">
+          {{ mensajeError }}
+        </div>
+
+        <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 12px;">
+          ⏱️ El código expira en 60 minutos.
+        </p>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          (click)="validarCodigo()"
+          [disabled]="isLoading"
+        >
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          {{ isLoading ? 'Validando...' : 'Validar Código' }}
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" (click)="volver()">
+          Volver
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- PASO 3: Cambiar Contraseña -->
+  <div *ngIf="currentStep === 'cambiar'">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="ion-text-center">Nueva Contraseña</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p class="ion-text-center ion-margin-bottom" style="color: #6b7280; font-size: 0.95rem;">
+          Establece una nueva contraseña segura para <strong>{{ usuarioValidado }}</strong>.
+        </p>
+
+        <ion-item class="ion-margin-bottom">
+          <ion-input
+            type="password"
+            label="Nueva Contraseña"
+            labelPlacement="floating"
+            [(ngModel)]="nuevaContrasena"
+            (ionInput)="mensajeError = ''"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item class="ion-margin-bottom">
+          <ion-input
+            type="password"
+            label="Confirmar Contraseña"
+            labelPlacement="floating"
+            [(ngModel)]="confirmarContrasena"
+            (ionInput)="mensajeError = ''"
+          ></ion-input>
+        </ion-item>
+
+        <div *ngIf="mensajeError" class="mensaje-error ion-padding-horizontal">
+          {{ mensajeError }}
+        </div>
+
+        <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 12px;">
+          ✓ 8+ caracteres, mayúscula, minúscula, número y carácter especial (@$!%*?&)
+        </p>
+
+        <ion-button
+          expand="block"
+          class="ion-margin-top"
+          (click)="cambiarContrasena()"
+          [disabled]="isLoading"
+        >
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          {{ isLoading ? 'Guardando...' : 'Cambiar Contraseña' }}
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" (click)="volver()">
+          Volver
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
