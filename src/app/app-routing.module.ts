@@ -61,6 +61,10 @@ const routes: Routes = [
     loadComponent: () => import('./pages/not-found/not-found.page').then(m => m.NotFoundPage)
   },
   {
+    path: 'desktop',
+    loadComponent: () => import('./pages/desktop/desktop.page').then(m => m.DesktopPage)
+  },
+  {
     path: '**',
     redirectTo: 'not-found'
   }

@@ -1,0 +1,147 @@
+/* Estilos para la página de escritorio, inspirados en login.page.scss */
+ion-content {
+  // El fondo se aplica directamente al host de ion-content para evitar problemas con el shadow DOM (inner-scroll)
+  --background: linear-gradient(180deg, #5c00b3 0%, #000 70%);
+}
+
+.login-bg {
+  // Este contenedor ahora solo se encarga de centrar el contenido
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  width: 100%;
+  border-radius: 20px;
+  padding: 2.2rem 2rem;
+  background: rgba(30, 0, 50, 0.6);
+  backdrop-filter: blur(18px);
+  box-shadow: 
+    0 0 25px rgba(180, 0, 255, 0.25), 
+    0 0 60px rgba(180, 0, 255, 0.1),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transition: 0.4s ease all;
+  text-align: center;
+
+  &:hover {
+    box-shadow: 
+      0 0 35px rgba(180, 0, 255, 0.4), 
+      0 0 80px rgba(180, 0, 255, 0.25);
+  }
+}
+
+.icon-flash {
+  font-size: 4.5rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+  filter: drop-shadow(0 0 18px rgba(200, 0, 255, 0.8)) drop-shadow(0 6px 24px rgba(120, 0, 180, 0.2));
+  transition: transform 160ms ease, filter 200ms ease;
+}
+
+.login-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 12px rgba(200, 0, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #d7cfe8;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.qr-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1.5rem auto;
+  max-width: 280px;
+}
+
+.qr-inner {
+  width: 100%;
+  max-width: 240px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 6px;
+  }
+}
+
+.qr-card:hover .qr-inner {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.note {
+  color: #bfb6d0;
+  font-size: 0.9rem;
+  margin: 1.5rem 0;
+}
+
+.btn-iniciar {
+  --background: linear-gradient(90deg, #c800ff, #7b00ff);
+  --color: #fff;
+  --border-radius: 12px;
+  --box-shadow: 0 0 20px rgba(200, 0, 255, 0.45), inset 0 0 8px rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  height: 48px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  margin-top: 1rem;
+
+  &:hover {
+    transform: scale(1.03);
+    --background: linear-gradient(90deg, #e200ff, #a000ff);
+    --box-shadow: 0 0 30px rgba(200, 0, 255, 0.7), inset 0 0 12px rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-bg {
+    padding: 1rem;
+  }
+
+  .login-card {
+    padding: 1.8rem 1.5rem;
+  }
+
+  .login-title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .qr-card {
+    max-width: 240px;
+  }
+}
