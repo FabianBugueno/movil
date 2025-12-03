@@ -160,13 +160,7 @@ ion-content {
   gap: 2px;
 }
 
-.home-footer .footer-card,
-.home-footer .footer-card .card-content-flex {
-  background: transparent !important;
-  --background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-}
+
 
 .footer-card ion-icon {
   display: block;
@@ -252,15 +246,15 @@ ion-card {
 }
 
 .home-footer {
-  position: fixed;
+  /* position: fixed; */
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 9999;
   height: auto;
   --footer-height: 110px;
-  min-height: var(--footer-height);
-  --background: linear-gradient(90deg, rgba(123,0,255,0.95), rgba(0,0,0,0.9));
+  /* min-height: var(--footer-height); */
+  --background: linear-gradient(90deg, rgba(123, 0, 255, 0.95), rgba(0, 0, 0, 0.9));
   --color: #fff;
   margin-bottom: 0;
   padding-bottom: env(safe-area-inset-bottom);

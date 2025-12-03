@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BienvenidaPage } from './bienvenida.page';
 
-describe('BienvenidaPage', () => {
+describe('Página Bienvenida', () => {
   let component: BienvenidaPage;
   let fixture: ComponentFixture<BienvenidaPage>;
 
@@ -11,7 +11,7 @@ describe('BienvenidaPage', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debe crear el componente', () => {
     expect(component).toBeTruthy();
   });
 });

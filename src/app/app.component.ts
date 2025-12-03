@@ -33,6 +33,7 @@ export class AppComponent {
       await StatusBar.setBackgroundColor({ color: '#7b00ff' });
       // Use dark icons on light background when supported
       await StatusBar.setStyle({ style: Style.Dark });
+      await StatusBar.setOverlaysWebView({ overlay: false });
     } catch (e) {
       // plugin not available (web or missing plugin) — ignore
       console.debug('StatusBar not available:', e);
